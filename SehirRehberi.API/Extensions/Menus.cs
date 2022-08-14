@@ -1,4 +1,5 @@
-﻿using SehirRehberi.API.Data;
+﻿using AutoMapper;
+using SehirRehberi.API.Data;
 
 namespace SehirRehberi.API.Extensions
 {
@@ -7,6 +8,7 @@ namespace SehirRehberi.API.Extensions
         public static void TheFoodMenu(this IServiceCollection services)
         {
             services.AddScoped<IAppRepository, AppRepository>();
+            
         }
     }
 }

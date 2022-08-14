@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SehirRehberi.API.Data;
 using SehirRehberi.API.DTOS;
@@ -10,24 +11,18 @@ namespace SehirRehberi.API.Controllers
     public class CitiesController : ControllerBase
     {
         private IAppRepository _repository;
-        public CitiesController(IAppRepository repository)
+        private IMapper _mapper;
+        public CitiesController(IAppRepository repository,IMapper mapper)
         {
+            _mapper = mapper;
             _repository = repository;
         }
 
         [HttpGet]
         public ActionResult GetCities()
         {
-            var dönüt = _repository.GetCities().Select(
-                c => new CityForListDto
-                {
-                    Description = c.Description,
-                    Name = c.Name,
-                    Id = c.Id,
-                    PhotoUrl = c.Photos.FirstOrDefault(p => p.IsMain == true)
-                                .Url
-                }
-                ).ToList();
+            var dönen = _repository.GetCities();
+            var dönüt = _mapper.Map<List<CityForListDto>>(dönen);
             return Ok(dönüt);
         }
     }

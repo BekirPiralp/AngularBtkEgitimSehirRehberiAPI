@@ -10,6 +10,8 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddSql(builder);
+builder.Services.TheFoodMenu();
+builder.Services.Add();
 
 var app = builder.Build();
 
