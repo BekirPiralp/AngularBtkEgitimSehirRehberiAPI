@@ -1,3 +1,4 @@
+
 using SehirRehberi.API.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -17,9 +18,11 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddSql(builder);
 builder.Services.TheFoodMenu();
-builder.Services.Add();
+builder.Services.MyAdd(builder.Configuration);
+
 
 var app = builder.Build();
+
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -29,12 +32,13 @@ if (app.Environment.IsDevelopment())
 }
 
 
-
 app.CorsEnable(builder.Services);
 
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
+
+app.AddMiddleWare();
 
 app.MapControllers();
 
