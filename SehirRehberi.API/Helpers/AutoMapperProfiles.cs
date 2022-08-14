@@ -16,6 +16,8 @@ namespace SehirRehberi.API.Helpers
                                   .FirstOrDefault().Url
                         );
                 });
+
+            CreateMap<City, CityForDetailDto>();
         }
     }
 }
