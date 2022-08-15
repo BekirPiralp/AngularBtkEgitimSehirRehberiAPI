@@ -8,6 +8,7 @@ namespace SehirRehberi.API.Extensions
         public static void TheFoodMenu(this IServiceCollection services)
         {
             services.AddScoped<IAppRepository, AppRepository>();
+            services.AddScoped<IAuthRepository,AuthRepository>();
             
         }
     }
