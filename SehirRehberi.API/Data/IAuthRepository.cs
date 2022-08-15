@@ -6,6 +6,6 @@ namespace SehirRehberi.API.Data
     {
         Task<User> Register(User user,string password);
         Task<User> Login(string userName, string password);
-        Task<User> UserExits(string userName);
+        Task<bool> UserExits(string userName);
     }
 }

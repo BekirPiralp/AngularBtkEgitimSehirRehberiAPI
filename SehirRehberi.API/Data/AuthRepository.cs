@@ -1,4 +1,5 @@
-﻿using SehirRehberi.API.Model;
+﻿using Microsoft.EntityFrameworkCore;
+using SehirRehberi.API.Model;
 
 namespace SehirRehberi.API.Data
 {
@@ -11,9 +12,37 @@ namespace SehirRehberi.API.Data
             _context = context;
         }
 
-        public Task<User> Login(string userName, string password)
+        public async Task<User> Login(string userName, string password)
         {
-            throw new NotImplementedException();
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.UserName == userName);
+            if(user == null)
+            {
+                return null;
+            }
+            if (!VeriftPasswordHash(password,user.PasswordHash,user.PasswordSalt))
+            {
+                return null;
+            }
+            return user;
+        }
+
+        private bool VeriftPasswordHash(string password, byte[]? passwordHash, byte[]? passwordSalt)
+        {
+            bool dönüt=true;
+            using(var hmac = new System.Security.Cryptography.HMACSHA512(passwordSalt))
+            {
+                var computedHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
+                for (int i = 0; i < computedHash.Length; i++)
+                {
+                    if (computedHash[i] != passwordHash[i])
+                    {
+                        dönüt = false;
+                        break;
+                    }
+                }
+            }
+
+            return dönüt;
         }
 
         public async Task<User> Register(User user, string password)
@@ -40,9 +69,14 @@ namespace SehirRehberi.API.Data
             }
         }
 
-        public Task<User> UserExits(string userName)
+        public async Task<bool> UserExits(string userName)
         {
-            throw new NotImplementedException();
+            bool dönüt=false;
+            if(await _context.Users.AnyAsync(u=>u.UserName == userName))
+            {
+                dönüt = true;
+            }
+            return dönüt;
         }
     }
 }
