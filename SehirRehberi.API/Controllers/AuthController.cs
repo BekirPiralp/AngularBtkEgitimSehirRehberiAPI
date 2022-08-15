@@ -1,8 +1,12 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 using SehirRehberi.API.Data;
 using SehirRehberi.API.DTOS;
 using SehirRehberi.API.Model;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 
 namespace SehirRehberi.API.Controllers
 {
@@ -39,6 +43,36 @@ namespace SehirRehberi.API.Controllers
             var createdUser = await _authRepository.Register(userToCreate, userForRegisterDto.Password);
             return StatusCode(201,createdUser); //Kaydedildi denen kod 201 dir.
         }
+
+        [HttpPost("login")]
+        public async Task<IActionResult> Login([FromBody] UserForLoginDto userForLoginDto)
+        {
+            var user = await _authRepository.Login(userForLoginDto.UserName, userForLoginDto.Password);
+            
+            if(user == null)
+            {
+                return Unauthorized();
+            }
+
+            var tokenHandler = new JwtSecurityTokenHandler();//token işlerini kim yapacak
+            var key = Encoding.UTF8.GetBytes(_configuration.GetSection("AppSettings:Token").Value);
+
+            var tokenDescriptor = new SecurityTokenDescriptor {
+                Subject = new ClaimsIdentity(new Claim[]
+                {
+                    new Claim(ClaimTypes.NameIdentifier,user.Id.ToString()),
+                    new Claim(ClaimTypes.Name,user.UserName)
+                }),
+                Expires = DateTime.Now.AddDays(1),
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key),
+                SecurityAlgorithms.HmacSha512Signature)
+            };
+
+            var token = tokenHandler.CreateToken(tokenDescriptor);
+            var tokenString = tokenHandler.WriteToken(token);
+
+            return Ok(tokenString);
+        } 
 
 
     }
