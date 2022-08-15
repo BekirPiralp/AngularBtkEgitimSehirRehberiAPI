@@ -1,9 +1,11 @@
 
 using SehirRehberi.API.Extensions;
+using SehirRehberi.API.Helpers;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+builder.Services.Configure<CloudinarySettings>(builder.Configuration.GetSection("CloudinarySettings"));
 
 builder.Services.AddControllers().AddNewtonsoftJson(
     opt =>
