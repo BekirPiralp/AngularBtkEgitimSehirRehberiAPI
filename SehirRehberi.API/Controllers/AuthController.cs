@@ -70,8 +70,8 @@ namespace SehirRehberi.API.Controllers
 
             var token = tokenHandler.CreateToken(tokenDescriptor);
             var tokenString = tokenHandler.WriteToken(token);
-
-            return Ok(tokenString);
+            tokenString = "\"" + tokenString + "\"";
+            return Ok(tokenString.ToString());
         } 
 
 
