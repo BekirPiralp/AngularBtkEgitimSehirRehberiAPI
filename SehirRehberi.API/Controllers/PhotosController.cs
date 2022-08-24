@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using CloudinaryDotNet;
 using CloudinaryDotNet.Actions;
-using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using SehirRehberi.API.Data;
@@ -12,7 +12,7 @@ using System.Security.Claims;
 
 namespace SehirRehberi.API.Controllers
 {
-    [Produces("application/json")] //Bilerek fazladan ekledim normalde gerek yok lakin böyle bir yöntemde var
+    //[Produces("application/json")] //Bilerek fazladan ekledim normalde gerek yok lakin böyle bir yöntemde var
     [Route("api/cities/{cityId}/photos")]
     [ApiController]
     public class PhotosController : ControllerBase
@@ -38,6 +38,7 @@ namespace SehirRehberi.API.Controllers
         }
 
         [HttpPost]
+        
         public ActionResult AddPhotoForCity(int cityId, [FromForm]PhotoForCreationDto photoForCreationDto)
         {
             var city = _appRepository.GetCityById(cityId);
@@ -86,13 +87,14 @@ namespace SehirRehberi.API.Controllers
             if (_appRepository.SaveAll())
             {
                 var photoToReturn = _mapper.Map<PhotoForReturnDto>(photo);
-                return CreatedAtRoute("GetPhoto", new { id = photo.Id }, photoToReturn); //ilgili route yönlendiriyor
+                var hmm = GetPhoto(photoToReturn.Id);
+                return hmm;
             }
 
             return BadRequest("Cloud not add the photo");
         }
 
-        [HttpGet("{id}",Name ="GetPhoto")]
+        [HttpGet("{id}")]
         public ActionResult GetPhoto(int id)
         {
             var photoFromDb = _appRepository.GetPhotoById(id);

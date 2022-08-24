@@ -6,6 +6,7 @@
         {
             services.AddCors();
             app.UseCors(x=>x.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());
+            
         }
     }
 }
